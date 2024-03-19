@@ -1,5 +1,5 @@
-import { render, renderDefault } from './render.js';
-import { storageAvailable } from './storage.js';
+import { render, renderDefault } from './render';
+import { storageAvailable } from './storage';
 import './style.css';
 
 let myProjects = [];

@@ -1,6 +1,6 @@
+import { format } from 'date-fns';
 import Project from './project';
 import { createProjectModal, createTodoModal } from './modal';
-import { format } from 'date-fns';
 import { storageAvailable, populateStorage } from './storage';
 
 const renderNavbar = (projects) => {
@@ -69,7 +69,7 @@ const render = (projects) => {
       const todoDeleteBtn = document.createElement('button');
       const todoSeparator = document.createElement('hr');
       const editModal = createTodoModal(
-        'edit' + projectIndex + todoIndex,
+        `edit${projectIndex}${todoIndex}`,
         todo
       );
 
@@ -127,7 +127,7 @@ const render = (projects) => {
     });
 
     const addTask = document.createElement('button');
-    const addModal = createTodoModal('add' + projectIndex);
+    const addModal = createTodoModal(`add${projectIndex}`);
 
     addTask.textContent = 'Add task';
     addTask.classList.add('add');

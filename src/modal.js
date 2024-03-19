@@ -2,24 +2,15 @@ import _ from 'lodash';
 
 function pad(number) {
   if (number < 10) {
-    return '0' + number;
+    return `0${number}`;
   }
   return number;
 }
 
-Date.prototype.toLocaleDateTimeString = function () {
-  return (
-    this.getFullYear() +
-    '-' +
-    pad(this.getMonth() + 1) +
-    '-' +
-    pad(this.getDate()) +
-    'T' +
-    pad(this.getHours()) +
-    ':' +
-    pad(this.getMinutes())
-  );
-};
+const toLocaleDateTimeString = (date) =>
+  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 
 const createProjectModal = () => {
   const modal = document.createElement('div');
@@ -68,7 +59,7 @@ const createProjectModal = () => {
 
   // When the user clicks anywhere outside of the modal, close it
   window.addEventListener('click', (e) => {
-    if (e.target == modal) {
+    if (e.target === modal) {
       modal.style.display = 'none';
     }
   });
@@ -110,27 +101,27 @@ const createTodoModal = (name, todo = {}) => {
 
   modalForm.setAttribute('action', '#');
   modalForm.setAttribute('method', 'post');
-  modalForm.id = name + 'Form';
+  modalForm.id = `${name}Form`;
 
-  modalTitleLabel.setAttribute('for', name + 'title');
-  modalTitleInput.id = name + 'title';
+  modalTitleLabel.setAttribute('for', `${name}title`);
+  modalTitleInput.id = `${name}title`;
   modalTitleInput.name = 'title';
   modalTitleInput.type = 'text';
   modalTitleInput.required = true;
 
-  modalDescLabel.setAttribute('for', name + 'description');
-  modalDescInput.id = name + 'description';
+  modalDescLabel.setAttribute('for', `${name}description`);
+  modalDescInput.id = `${name}description`;
   modalDescInput.name = 'description';
   modalDescInput.type = 'text';
 
-  modalDueDateLabel.setAttribute('for', name + 'dueDate');
-  modalDueDateInput.id = name + 'dueDate';
+  modalDueDateLabel.setAttribute('for', `${name}dueDate`);
+  modalDueDateInput.id = `${name}dueDate`;
   modalDueDateInput.name = 'dueDate';
   modalDueDateInput.type = 'datetime-local';
   modalDueDateInput.required = true;
 
-  modalPriorityLabel.setAttribute('for', name + 'priority');
-  modalPriorityInput.id = name + 'priority';
+  modalPriorityLabel.setAttribute('for', `${name}priority`);
+  modalPriorityInput.id = `${name}priority`;
   modalPriorityInput.name = 'priority';
   modalPriorityInput.type = 'number';
   modalPriorityInput.min = 1;
@@ -140,6 +131,9 @@ const createTodoModal = (name, todo = {}) => {
   modalContent.classList.add('modal-content');
   modalClose.classList.add('close');
 
+  modalBtn.type = 'submit';
+  modalBtn.classList.add('btn');
+
   // When the user clicks on <span> (x), close the modal
   modalClose.addEventListener('click', () => {
     modal.style.display = 'none';
@@ -147,64 +141,47 @@ const createTodoModal = (name, todo = {}) => {
 
   // When the user clicks anywhere outside of the modal, close it
   window.addEventListener('click', (e) => {
-    if (e.target == modal) {
+    if (e.target === modal) {
       modal.style.display = 'none';
     }
   });
 
-  const render = () => {
-    modalForm.appendChild(modalTitleLabel);
-    modalForm.appendChild(modalTitleInput);
-    modalForm.appendChild(modalDescLabel);
-    modalForm.appendChild(modalDescInput);
-    modalForm.appendChild(modalDueDateLabel);
-    modalForm.appendChild(modalDueDateInput);
-    modalForm.appendChild(modalPriorityLabel);
-    modalForm.appendChild(modalPriorityInput);
-    modalForm.appendChild(modalBtn);
-
-    modalContent.appendChild(modalClose);
-    modalContent.appendChild(modalForm);
-
-    modal.appendChild(modalContent);
-
-    return modal;
-  };
-
-  const add = () => {
+  if (_.isEmpty(todo)) {
+    // Add modal
     modalTitleInput.value = '';
     modalDescInput.value = '';
-    modalDueDateInput.value = new Date().toLocaleDateTimeString();
+    modalDueDateInput.value = toLocaleDateTimeString(new Date());
     modalPriorityInput.value = 1;
 
     modalBtn.id = 'add';
     modalBtn.name = 'add';
-    modalBtn.type = 'submit';
-    modalBtn.classList.add('btn');
-
     modalBtn.textContent = 'Add task';
-
-    render();
-  };
-
-  const edit = (todo) => {
+  } else {
+    // Edit modal
     modalTitleInput.value = todo.title;
     modalDescInput.value = todo.description;
-    modalDueDateInput.value = new Date(todo.dueDate).toLocaleDateTimeString();
+    modalDueDateInput.value = toLocaleDateTimeString(new Date(todo.dueDate));
     modalPriorityInput.value = todo.priority;
 
     modalBtn.id = 'edit';
     modalBtn.name = 'edit';
-    modalBtn.type = 'submit';
-    modalBtn.classList.add('btn');
-
     modalBtn.textContent = 'Edit task';
+  }
 
-    render();
-  };
+  modalForm.appendChild(modalTitleLabel);
+  modalForm.appendChild(modalTitleInput);
+  modalForm.appendChild(modalDescLabel);
+  modalForm.appendChild(modalDescInput);
+  modalForm.appendChild(modalDueDateLabel);
+  modalForm.appendChild(modalDueDateInput);
+  modalForm.appendChild(modalPriorityLabel);
+  modalForm.appendChild(modalPriorityInput);
+  modalForm.appendChild(modalBtn);
 
-  if (_.isEmpty(todo)) add();
-  else edit(todo);
+  modalContent.appendChild(modalClose);
+  modalContent.appendChild(modalForm);
+
+  modal.appendChild(modalContent);
 
   return { modal, modalForm };
 };
